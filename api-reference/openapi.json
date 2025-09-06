@@ -1,217 +1,4596 @@
 {
-  "openapi": "3.1.0",
+  "openapi": "3.0.2",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
+    "title": "VExpenses - Public API",
+    "description": "Public API",
+    "contact": {
+      "email": "vexpenses@vexpenses.com"
     },
-    "version": "1.0.0"
+    "version": "V2"
+  },
+  "externalDocs": {
+    "description": "Find out more about VExpenses",
+    "url": "https://vexpenses.com/"
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
+      "url": "https://api.vexpenses.com"
     }
   ],
-  "security": [
+  "tags": [
     {
-      "bearerAuth": []
+      "name": "team members",
+      "description": "Operations about team"
+    },
+    {
+      "name": "costs centers",
+      "description": "Operations about costs"
+    },
+    {
+      "name": "projects",
+      "description": "Operations about projects"
+    },
+    {
+      "name": "approval-flows",
+      "description": "Operations about approval flows"
+    },
+    {
+      "name": "reports",
+      "description": "Operations about reports"
+    },
+    {
+      "name": "expenses",
+      "description": "Operations about expenses"
+    },
+    {
+      "name": "expenses type",
+      "description": "Operations about expenses types"
+    },
+    {
+      "name": "currencies",
+      "description": "Operations about currencies"
+    },
+    {
+      "name": "advances",
+      "description": "Operations about advances"
     }
   ],
   "paths": {
-    "/plants": {
+    "/v2/team-members": {
       "get": {
-        "description": "Returns all plants from the system that the user has access to",
+        "tags": [
+          "team members"
+        ],
+        "summary": "Returns an array of team members",
+        "operationId": "TeamMembers_List",
         "parameters": [
           {
-            "name": "limit",
             "in": "query",
-            "description": "The maximum number of results to return",
+            "name": "include",
             "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+              "type": "string",
+              "enum": [
+                "costsCenters",
+                "projects"
+              ]
+            },
+            "description": "Flag used to return related objects,if you want to return multiple relations, you must separate them using comma. e.g.: 'expenses,user'"
+          },
+          {
+            "in": "query",
+            "name": "paginate",
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Flag used to indicate if the response must be paginated or not"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of the requested page"
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Number of elements that will come per page"
           }
         ],
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "successful operation",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
+                  "type": "object",
+                  "properties": {
+                    "request": {
+                      "type": "string",
+                      "example": "https://api.vexpenses.com/v2/team-members"
+                    },
+                    "method": {
+                      "type": "string",
+                      "example": "GET"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Team members successfully sent!"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    }
                   }
                 }
               }
             }
           },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
+          "401": {
+            "description": "Error: Unauthorized"
           }
         }
       },
       "post": {
-        "description": "Creates a new plant in the store",
+        "tags": [
+          "team members"
+        ],
+        "summary": "Inserts a team member object",
+        "operationId": "TeamMembers_Create",
         "requestBody": {
-          "description": "Plant to add to the store",
+          "required": true,
+          "description": "Successful operation",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/User_Post"
+                  },
+                  {
+                    "required": [
+                      "name",
+                      "email",
+                      "password",
+                      "birth_date",
+                      "user_type",
+                      "external_id"
+                    ]
+                  }
+                ]
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
-            "description": "plant response",
+            "description": "successful operation",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Plant"
+                  "type": "object",
+                  "properties": {
+                    "request": {
+                      "type": "string",
+                      "example": "https://api.vexpenses.com/v2/team-members"
+                    },
+                    "method": {
+                      "type": "string",
+                      "example": "POST"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Team member successfully created!"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    }
+                  }
                 }
               }
             }
           },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
+          "401": {
+            "description": "Error: Unauthorized"
           }
         }
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
+    "/v2/team-members/{id}": {
+      "get": {
+        "tags": [
+          "team members"
+        ],
+        "summary": "Returns a team member object",
+        "operationId": "TeamMembers_Get",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
+            "$ref": "#/components/parameters/idTeamMember"
           }
         ],
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
+          "200": {
+            "description": "successful operation",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "properties": {
+                    "request": {
+                      "type": "string",
+                      "example": "https://api.vexpenses.com/v2/team-members/{id}"
+                    },
+                    "method": {
+                      "type": "string",
+                      "example": "GET"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Team member successfully sent!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
                 }
               }
             }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
           }
         }
-      }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
-      "post": {
-        "description": "Information about a new plant added to the store",
+      },
+      "put": {
+        "tags": [
+          "team members"
+        ],
+        "summary": "Updates a team member object",
+        "operationId": "TeamMembers_Update",
         "requestBody": {
-          "description": "Plant added to the store",
+          "required": true,
+          "description": "Successful operation",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "$ref": "#/components/schemas/User_Post"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/idTeamMember"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "request": {
+                      "type": "string",
+                      "example": "https://api.vexpenses.com/v2/team-members/{id}"
+                    },
+                    "method": {
+                      "type": "string",
+                      "example": "PUT"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Team members successfully updated!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      }
+    },
+    "/v2/team-members/email/{email}": {
+      "get": {
+        "tags": [
+          "team members"
+        ],
+        "summary": "Returns a team member object by its email",
+        "operationId": "TeamMembers_GetByEmail_ByEmail",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/emailTeamMember"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "request": {
+                      "type": "string",
+                      "example": "https://api.vexpenses.com/v2/team-members/email/{email}"
+                    },
+                    "method": {
+                      "type": "string",
+                      "example": "GET"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Team member successfully sent!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      }
+    },
+    "/v2/team-members/parameters": {
+      "get": {
+        "tags": [
+          "team members"
+        ],
+        "summary": "Returns a parameters collection",
+        "operationId": "TeamMembers_GetParameters_Parameters",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "request": {
+                      "type": "string",
+                      "example": "https://api.vexpenses.com/v2/team-members/parameters"
+                    },
+                    "method": {
+                      "type": "string",
+                      "example": "GET"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Parameters successfully sent!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Parameters"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      }
+    },
+    "/v2/team-members/{id}/attach-cost-center": {
+      "post": {
+        "tags": [
+          "team members"
+        ],
+        "summary": "Use this endpoint to attach team-members with cost center",
+        "operationId": "TeamMembers_AttachCostCenters_AttachCostCenters",
+        "requestBody": {
+          "required": true,
+          "description": "Successful operation",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "cost_center_external_code": {
+                    "$ref": "#/components/schemas/cost_center_external"
+                  }
+                },
+                "required": [
+                  "cost_center_external_code"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/idTeamMember"
+          },
+          {
+            "in": "query",
+            "name": "include",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "costsCenters"
+              ],
+              "default": "costsCenters"
+            },
+            "description": "Flag used to return related objects"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "request": {
+                      "type": "string",
+                      "example": "https://api.vexpenses.com/v2/team-members/{id}/attach-cost-center"
+                    },
+                    "method": {
+                      "type": "string",
+                      "example": "POST"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Team members successfully linked!"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/User"
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "costsCenters": {
+                                "type": "object",
+                                "properties": {
+                                  "data": {
+                                    "type": "array",
+                                    "items": {
+                                      "$ref": "#/components/schemas/Costs_center"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      }
+    },
+    "/v2/team-members/{id}/attach-projects": {
+      "post": {
+        "tags": [
+          "team members"
+        ],
+        "summary": "Use this endpoint to attach team-members with projects",
+        "operationId": "TeamMembers_AttachProjects_AttachProjects",
+        "requestBody": {
+          "required": true,
+          "description": "Successful operation",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "project_external_code": {
+                    "$ref": "#/components/schemas/cost_center_external"
+                  }
+                },
+                "required": [
+                  "project_external_code"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/idTeamMember"
+          },
+          {
+            "in": "query",
+            "name": "include",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "projects"
+              ],
+              "default": "projects"
+            },
+            "description": "Flag used to return related objects"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "request": {
+                      "type": "string",
+                      "example": "https://api.vexpenses.com/v2/team-members/{id}/attach-projects"
+                    },
+                    "method": {
+                      "type": "string",
+                      "example": "POST"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Team members successfully linked!"
+                    },
+                    "data": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/User"
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "projects": {
+                              "type": "object",
+                              "properties": {
+                                "data": {
+                                  "type": "array",
+                                  "items": {
+                                    "$ref": "#/components/schemas/Project"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      }
+    },
+    "/v2/costs-centers": {
+      "get": {
+        "tags": [
+          "costs centers"
+        ],
+        "summary": "Returns a array of cost centers",
+        "operationId": "CostsCenters_List",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/paginateParameter"
+          },
+          {
+            "$ref": "#/components/parameters/perPageParameter"
+          },
+          {
+            "$ref": "#/components/parameters/pageParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string"
+                        },
+                        "method": {
+                          "type": "string"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        },
+                        "code": {
+                          "type": "integer"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Costs_center"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string"
+                        },
+                        "method": {
+                          "type": "string"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        },
+                        "code": {
+                          "type": "integer"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Costs_center"
+                          }
+                        },
+                        "current_page": {
+                          "type": "integer"
+                        },
+                        "first_page_url": {
+                          "type": "string"
+                        },
+                        "from": {
+                          "type": "integer"
+                        },
+                        "last_page": {
+                          "type": "integer"
+                        },
+                        "last_page_url": {
+                          "type": "string"
+                        },
+                        "next_page_url": {
+                          "type": "string"
+                        },
+                        "path": {
+                          "type": "string"
+                        },
+                        "per_page": {
+                          "type": "integer"
+                        },
+                        "prev_page_url": {
+                          "type": "string"
+                        },
+                        "to": {
+                          "type": "integer"
+                        },
+                        "total": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "examples": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "costs centers"
+        ],
+        "summary": "Inserts a center cost object",
+        "operationId": "CostsCenters_Create",
+        "requestBody": {
+          "required": true,
+          "description": "Successful operation",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Costs_center_without_id"
+                  },
+                  {
+                    "required": [
+                      "name"
+                    ]
+                  }
+                ]
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string",
+                          "example": "https://api.vexpenses.com/v2/costs-centers"
+                        },
+                        "method": {
+                          "type": "string",
+                          "example": "POST"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "integer",
+                          "example": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Costs Centers successfully created!"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Costs_center"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      }
+    },
+    "/v2/costs-centers/{id}": {
+      "get": {
+        "tags": [
+          "costs centers"
+        ],
+        "summary": "Returns a center cost object",
+        "operationId": "CostsCenters_Get",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/idCostsCenter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string",
+                          "example": "https://api.vexpenses.com/v2/costs-centers/{id}"
+                        },
+                        "method": {
+                          "type": "string",
+                          "example": "GET"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "integer",
+                          "example": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Cost center successfully sent!"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Costs_center"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "costs centers"
+        ],
+        "summary": "Removes a center cost object",
+        "operationId": "CostsCenters_Delete",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/idCostsCenter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "request": {
+                      "type": "string",
+                      "example": "https://api.vexpenses.com/v2/costs-centers/{id}"
+                    },
+                    "method": {
+                      "type": "string",
+                      "example": "DELETE"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Cost center successfully removed!"
+                    },
+                    "data": {
+                      "example": null,
+                      "nullable": true,
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "costs centers"
+        ],
+        "summary": "Updates a center cost object",
+        "operationId": "CostsCenters_Update",
+        "requestBody": {
+          "required": true,
+          "description": "Successful operation",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Costs_center_without_id"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/idCostsCenter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "request": {
+                      "type": "string",
+                      "example": "https://api.vexpenses.com/v2/costs-centers/{id}"
+                    },
+                    "method": {
+                      "type": "string",
+                      "example": "PUT"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Cost center successfully updated!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Costs_center"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      }
+    },
+    "/v2/projects": {
+      "get": {
+        "tags": [
+          "projects"
+        ],
+        "summary": "Returns a array of projects",
+        "operationId": "Projects_List",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/paginateParameter"
+          },
+          {
+            "$ref": "#/components/parameters/perPageParameter"
+          },
+          {
+            "$ref": "#/components/parameters/pageParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string"
+                        },
+                        "method": {
+                          "type": "string"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        },
+                        "code": {
+                          "type": "integer"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Project"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string"
+                        },
+                        "method": {
+                          "type": "string"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        },
+                        "code": {
+                          "type": "integer"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Project"
+                          }
+                        },
+                        "current_page": {
+                          "type": "integer"
+                        },
+                        "first_page_url": {
+                          "type": "string"
+                        },
+                        "from": {
+                          "type": "integer"
+                        },
+                        "last_page": {
+                          "type": "integer"
+                        },
+                        "last_page_url": {
+                          "type": "string"
+                        },
+                        "next_page_url": {
+                          "type": "string"
+                        },
+                        "path": {
+                          "type": "string"
+                        },
+                        "per_page": {
+                          "type": "integer"
+                        },
+                        "prev_page_url": {
+                          "type": "string"
+                        },
+                        "to": {
+                          "type": "integer"
+                        },
+                        "total": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "examples": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "projects"
+        ],
+        "summary": "Inserts a project object",
+        "operationId": "Projects_Create",
+        "requestBody": {
+          "required": true,
+          "description": "Successful operation",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Project_without_id"
+                  },
+                  {
+                    "required": [
+                      "name"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string",
+                          "example": "https://api.vexpenses.com/v2/projects"
+                        },
+                        "method": {
+                          "type": "string",
+                          "example": "POST"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "integer",
+                          "example": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Projects successfully created!"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Project"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      }
+    },
+    "/v2/projects/{id}": {
+      "get": {
+        "tags": [
+          "projects"
+        ],
+        "summary": "Returns a project object",
+        "operationId": "Projects_Get",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/idProject"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string",
+                          "example": "https://api.vexpenses.com/v2/projects/{id}"
+                        },
+                        "method": {
+                          "type": "string",
+                          "example": "GET"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "integer",
+                          "example": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Project successfully sent!"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Project"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "projects"
+        ],
+        "summary": "Updates a project object",
+        "operationId": "Projects_Update",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/idProject"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Successful operation",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Project_without_id"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string",
+                          "example": "https://api.vexpenses.com/v2/projects/{id}"
+                        },
+                        "method": {
+                          "type": "string",
+                          "example": "PUT"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "integer",
+                          "example": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Projects successfully updated!"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Project"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "projects"
+        ],
+        "summary": "Removes a project object",
+        "operationId": "Projects_Delete",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/idProject"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "request": {
+                      "type": "string",
+                      "example": "https://api.vexpenses.com/v2/projects/{id}"
+                    },
+                    "method": {
+                      "type": "string",
+                      "example": "DELETE"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Project successfully removed!"
+                    },
+                    "data": {
+                      "example": null,
+                      "nullable": true,
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      }
+    },
+    "/v2/approval-flows": {
+      "get": {
+        "tags": [
+          "approval-flows"
+        ],
+        "summary": "Returns an array of approval flows",
+        "operationId": "ApprovalFlows_List",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string",
+                          "example": "https://api.vexpenses.com/v2/approval-flows"
+                        },
+                        "method": {
+                          "type": "string",
+                          "example": "GET"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "integer",
+                          "example": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Approval flows successfully sent!"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "items": {
+                            "$ref": "#/components/schemas/Approval-Flow"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "approval-flows"
+        ],
+        "summary": "Inserts an approval flow object",
+        "operationId": "ApprovalFlows_Create",
+        "requestBody": {
+          "required": true,
+          "description": "Approval flow model to be inserted",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Approval-Flow_without_ids"
+                  },
+                  {
+                    "required": [
+                      "description",
+                      "steps"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string",
+                          "example": "https://api.vexpenses.com/v2/approval-flows"
+                        },
+                        "method": {
+                          "type": "string",
+                          "example": "POST"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "integer",
+                          "example": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Approval flows successfully created!"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "items": {
+                            "$ref": "#/components/schemas/Approval-Flow"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      }
+    },
+    "/v2/approval-flows/{id}": {
+      "get": {
+        "tags": [
+          "approval-flows"
+        ],
+        "summary": "Returns an approval flow object",
+        "operationId": "ApprovalFlows_Get",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/idApprovalFlow"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string",
+                          "example": "https://api.vexpenses.com/v2/approval-flows/{id}"
+                        },
+                        "method": {
+                          "type": "string",
+                          "example": "GET"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "integer",
+                          "example": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Approval flows successfully sent!"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "items": {
+                            "$ref": "#/components/schemas/Approval-Flow"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "approval-flows"
+        ],
+        "summary": "Updates an approval flow object",
+        "operationId": "ApprovalFlows_Update",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/idApprovalFlow"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Approval flow model to be updated",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Approval-Flow_without_ids"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string",
+                          "example": "https://api.vexpenses.com/v2/approval-flows/{id}"
+                        },
+                        "method": {
+                          "type": "string",
+                          "example": "PUT"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "integer",
+                          "example": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Approval flows successfully updated!"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "items": {
+                            "$ref": "#/components/schemas/Approval-Flow"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "approval-flows"
+        ],
+        "summary": "Removes an approval flow object",
+        "operationId": "ApprovalFlows_Delete",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/idApprovalFlow"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "request": {
+                      "type": "string",
+                      "example": "https://api.vexpenses.com/v2/approval-flows/{id}"
+                    },
+                    "method": {
+                      "type": "string",
+                      "example": "DELETE"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Approval flow successfully removed!"
+                    },
+                    "data": {
+                      "example": null,
+                      "nullable": true,
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      }
+    },
+    "/v2/approval-flows/{id}/attach-cost-centers": {
+      "post": {
+        "tags": [
+          "approval-flows"
+        ],
+        "summary": "Attachs cost centers to approval flow",
+        "operationId": "ApprovalFlows_AttachCostCenters_AttachCostCenters",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/idApprovalFlow"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Approval-Flow_attach_cost_centers"
+                  },
+                  {
+                    "required": [
+                      "cost_centers_ids"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "request": {
+                      "type": "string",
+                      "example": "https://api.vexpenses.com/v2/approval-flows/{id}/attach-cost-centers"
+                    },
+                    "method": {
+                      "type": "string",
+                      "example": "POST"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Costs centers were successfully attached to approval flow"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      }
+    },
+    "/v2/reports": {
+      "get": {
+        "tags": [
+          "Relatórios"
+        ],
+        "summary": "Returns an array of reports",
+        "operationId": "RelatRios_List",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "include",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "expenses",
+                "expenses.apportionment",
+                "expenses.expense_type",
+                "expenses.gps",
+                "expenses.costs_center",
+                "user",
+                "payment_method",
+                "advance",
+                "approval",
+                "invoice",
+                "history"
+              ],
+              "default": "expenses"
+            },
+            "description": "Flag used to return related objects,if you want to return multiple relations, you must separate them using comma. e.g.: 'expenses,user'"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string",
+                          "example": "https://api.vexpenses.com/v2/reports"
+                        },
+                        "method": {
+                          "type": "string",
+                          "example": "GET"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "integer",
+                          "example": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Reports successfully sent!"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/Report"
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "expenses": {
+                                    "type": "object",
+                                    "properties": {
+                                      "data": {
+                                        "type": "array",
+                                        "items": {
+                                          "allOf": [
+                                            {
+                                              "$ref": "#/components/schemas/Expense"
+                                            },
+                                            {
+                                              "type": "object",
+                                              "properties": {
+                                                "apportionment": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "data": {
+                                                      "type": "array",
+                                                      "items": {
+                                                        "$ref": "#/components/schemas/Apportionment"
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Relatórios"
+        ],
+        "summary": "Inserts an report object",
+        "operationId": "RelatRios_Create",
+        "requestBody": {
+          "required": true,
+          "description": "Report model to be inserted",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": {
+                    "type": "number",
+                    "example": 1234
+                  },
+                  "external_id": {
+                    "type": "string",
+                    "example": "a3b52842-2a5a-45cf-a544-9cbee4c8f0e7"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Description"
+                  },
+                  "payment_method_id": {
+                    "type": "integer",
+                    "example": 123123
+                  }
+                },
+                "required": [
+                  "user_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string",
+                          "example": "https://api.vexpenses.com/v2/reports"
+                        },
+                        "method": {
+                          "type": "string",
+                          "example": "POST"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "integer",
+                          "example": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Reports successfully created!"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Report"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      }
+    },
+    "/v2/reports/{id}": {
+      "get": {
+        "tags": [
+          "Relatórios"
+        ],
+        "summary": "Returns a report object",
+        "operationId": "RelatRios_Get",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/idReport"
+          },
+          {
+            "in": "query",
+            "name": "include",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "expenses",
+                "expenses.apportionment",
+                "expenses.expense_type",
+                "expenses.gps"
+              ],
+              "default": "expenses"
+            },
+            "description": "Flag used to return related objects,if you want to return multiple relations, you must separate them using comma. e.g.: 'expenses,user'"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string",
+                          "example": "https://api.vexpenses.com/v2/reports/{id}"
+                        },
+                        "method": {
+                          "type": "string",
+                          "example": "GET"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "integer",
+                          "example": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Reports successfully sent!"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/Report"
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "expense": {
+                                    "type": "object",
+                                    "properties": {
+                                      "data": {
+                                        "type": "array",
+                                        "items": {
+                                          "allOf": [
+                                            {
+                                              "$ref": "#/components/schemas/Expense"
+                                            },
+                                            {
+                                              "type": "object",
+                                              "properties": {
+                                                "apportionment": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "data": {
+                                                      "type": "array",
+                                                      "items": {
+                                                        "$ref": "#/components/schemas/Apportionment"
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      }
+    },
+    "/v2/reports/status/{status}": {
+      "get": {
+        "tags": [
+          "Relatórios"
+        ],
+        "summary": "Return reports by status",
+        "operationId": "RelatRios_ListByStatus_Status",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "include",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "expenses",
+                "user",
+                "expenses.apportionment",
+                "expenses.expense_type",
+                "expenses.costs_center",
+                "expenses.payment_method",
+                "expenses.gps",
+                "advance",
+                "payment_method",
+                "approval"
+              ],
+              "default": "expenses"
+            },
+            "description": "Flag used to return related objects,if you want to return multiple relations, you must separate them using comma. e.g.: 'expenses,user'"
+          },
+          {
+            "name": "status",
+            "required": true,
+            "in": "path",
+            "description": "status of the reports",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ABERTO",
+                "APROVADO",
+                "REPROVADO",
+                "REABERTO",
+                "PAGO",
+                "ENVIADO"
+              ],
+              "default": "ABERTO"
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string",
+              "default": "approval_date:2021-01-01,2021-03-31;payment_date:2021-01-01;created_at:2021-01-01"
+            },
+            "description": "Field that you can customize your filter in some columns"
+          },
+          {
+            "in": "query",
+            "name": "searchFields",
+            "schema": {
+              "type": "string",
+              "default": "approval_date:between;payment_date:>=;created_at:="
+            },
+            "description": "Field that you will declare what is the comparator for the columns in the 'search' field, when using between, 2 dates separed by comma are required"
+          },
+          {
+            "in": "query",
+            "name": "searchJoin",
+            "schema": {
+              "type": "string",
+              "default": "and"
+            },
+            "description": "Flag that you will say to the filter what is his connection between the fields of the filter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string",
+                          "example": "https://api.vexpenses.com/v2/reports/status/{status}"
+                        },
+                        "method": {
+                          "type": "string",
+                          "example": "GET"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "integer",
+                          "example": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Reports successfully sent!"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/Report"
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "expenses": {
+                                    "type": "object",
+                                    "properties": {
+                                      "data": {
+                                        "type": "array",
+                                        "items": {
+                                          "allOf": [
+                                            {
+                                              "$ref": "#/components/schemas/Expense"
+                                            },
+                                            {
+                                              "type": "object",
+                                              "properties": {
+                                                "apportionment": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "data": {
+                                                      "type": "array",
+                                                      "items": {
+                                                        "$ref": "#/components/schemas/Apportionment"
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      }
+    },
+    "/v2/reports/{id}/approve": {
+      "post": {
+        "tags": [
+          "Relatórios"
+        ],
+        "summary": "Use this endpoint to approve reports",
+        "operationId": "RelatRios_Approve_Approve",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/idReport"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Object that contains all expenses of the report with their approvements",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "approver": {
+                    "type": "integer",
+                    "example": 12344
+                  },
+                  "comment": {
+                    "type": "string",
+                    "example": "The comment about this approval"
+                  },
+                  "expenses": {
+                    "$ref": "#/components/schemas/cost_center_external"
+                  }
+                },
+                "required": [
+                  "approver",
+                  "comment"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string",
+                          "example": "https://api.vexpenses.com/v2/reports/{id}/approve"
+                        },
+                        "method": {
+                          "type": "string",
+                          "example": "POST"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "integer",
+                          "example": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Report was approved with successfully!"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/ApprovalResult"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      }
+    },
+    "/v2/reports/{id}/pay": {
+      "put": {
+        "tags": [
+          "Relatórios"
+        ],
+        "summary": "Pay a report object",
+        "operationId": "RelatRios_Pay_Pay",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/idReport"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Payment date of the report model to be paid",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "payment_date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2019-01-01 01:10:00"
+                  },
+                  "comment": {
+                    "type": "string",
+                    "example": "Report was paid!"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string",
+                          "example": "https://api.vexpenses.com/v2/reports/{id}/pay"
+                        },
+                        "method": {
+                          "type": "string",
+                          "example": "PUT"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "integer",
+                          "example": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Reports successfully updated!"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Report"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      }
+    },
+    "/v2/expenses": {
+      "get": {
+        "tags": [
+          "expenses"
+        ],
+        "summary": "Returns an array of expenses",
+        "operationId": "Expenses_List",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "include",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "apportionment",
+                "user",
+                "expense_type",
+                "costs_center",
+                "payment_method",
+                "report",
+                "gps",
+                "fueling"
+              ]
+            },
+            "description": "Flag used to return related objects, if you want to return multiple relations, you must separate them using comma. e.g.: 'expenses,user'"
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string",
+              "default": "date:2021-01-01,2021-03-31;report.approval_date:2021-01-01,2021-03-31;payment_date:2021-01-01;created_at:2021-01-01;report.id:123"
+            },
+            "description": "Field that you can customize your filter in some columns"
+          },
+          {
+            "in": "query",
+            "name": "searchFields",
+            "schema": {
+              "type": "string",
+              "default": "date:between;report.approval_date:between;payment_date:>=;created_at:=;report.id:="
+            },
+            "description": "Field that you will declare what is the comparator for the columns in the 'search' field, when using between, 2 dates separed by comma are required"
+          },
+          {
+            "in": "query",
+            "name": "searchJoin",
+            "schema": {
+              "type": "string",
+              "default": "and"
+            },
+            "description": "Flag that you will say to the filter what is his connection between the fields of the filter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string",
+                          "example": "https://api.vexpenses.com/v2/expenses"
+                        },
+                        "method": {
+                          "type": "string",
+                          "example": "GET"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "integer",
+                          "example": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Expenses successfully sent!"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/Expense"
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "apportionment": {
+                                    "type": "array",
+                                    "items": {
+                                      "$ref": "#/components/schemas/Apportionment"
+                                    }
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "expenses"
+        ],
+        "summary": "Inserts an expense object",
+        "operationId": "Expenses_Create",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "include",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "apportionment"
+              ],
+              "default": "apportionment"
+            },
+            "description": "Flag used to return related objects"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "expense model to be inserted",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Expense_clear"
+                  },
+                  {
+                    "required": [
+                      "user_id",
+                      "external_id",
+                      "date",
+                      "paying_company_id",
+                      "value",
+                      "title"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string",
+                          "example": "https://api.vexpenses.com/v2/expenses"
+                        },
+                        "method": {
+                          "type": "string",
+                          "example": "POST"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "integer",
+                          "example": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Expenses successfully created!"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/Expense"
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "apportionment": {
+                                    "type": "array",
+                                    "items": {
+                                      "$ref": "#/components/schemas/Apportionment"
+                                    }
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      }
+    },
+    "/v2/expenses/{id}": {
+      "get": {
+        "tags": [
+          "expenses"
+        ],
+        "summary": "Returns an expense object",
+        "operationId": "Expenses_Get",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/idExpense"
+          },
+          {
+            "in": "query",
+            "name": "include",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "apportionment",
+                "user",
+                "expense_type",
+                "costs_center",
+                "payment_method",
+                "report",
+                "gps",
+                "fueling"
+              ]
+            },
+            "description": "Flag used to return related objects, if you want to return multiple relations, you must separate them using comma. e.g.: 'expenses,user'"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string",
+                          "example": "https://api.vexpenses.com/v2/expenses/{id}"
+                        },
+                        "method": {
+                          "type": "string",
+                          "example": "GET"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "integer",
+                          "example": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Expense successfully sent!"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Expense"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "expenses"
+        ],
+        "summary": "Update an expense object",
+        "operationId": "Expenses_Update",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "include",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "apportionment"
+              ],
+              "default": "apportionment"
+            },
+            "description": "Flag used to return related objects"
+          },
+          {
+            "$ref": "#/components/parameters/idExpense"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "expense model to be inserted",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Expense_clear"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string",
+                          "example": "https://api.vexpenses.com/v2/expenses/{id}"
+                        },
+                        "method": {
+                          "type": "string",
+                          "example": "PUT"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "integer",
+                          "example": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Expenses successfully updated!"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/Expense"
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "apportionment": {
+                                  "type": "array",
+                                  "items": {
+                                    "$ref": "#/components/schemas/Apportionment"
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "expenses"
+        ],
+        "summary": "Removes a expense object",
+        "operationId": "Expenses_Delete",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/idExpense"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "request": {
+                      "type": "string",
+                      "example": "https://api.vexpenses.com/v2/expenses/{id}"
+                    },
+                    "method": {
+                      "type": "string",
+                      "example": "DELETE"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Expense successfully removed!"
+                    },
+                    "data": {
+                      "example": null,
+                      "nullable": true,
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      }
+    },
+    "/v2/expenses-type": {
+      "get": {
+        "tags": [
+          "expenses type"
+        ],
+        "summary": "Returns an array of expense_type",
+        "operationId": "ExpensesType_List",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string",
+                          "example": "https://api.vexpenses.com/v2/expenses-type"
+                        },
+                        "method": {
+                          "type": "string",
+                          "example": "GET"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "integer",
+                          "example": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Expenses types successfully sent!"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Expense_type"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "expenses type"
+        ],
+        "summary": "Inserts an expenses_type object",
+        "operationId": "ExpensesType_Create",
+        "requestBody": {
+          "required": true,
+          "description": "expenses_type model to be inserted",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Expense_type_post"
+                  },
+                  {
+                    "required": [
+                      "description"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string",
+                          "example": "https://api.vexpenses.com/v2/expenses-type"
+                        },
+                        "method": {
+                          "type": "string",
+                          "example": "POST"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "integer",
+                          "example": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Expenses types successfully created!"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Expense_type"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      }
+    },
+    "/v2/expenses-type/{id}": {
+      "get": {
+        "tags": [
+          "expenses type"
+        ],
+        "summary": "Returns an expenses_type object",
+        "operationId": "ExpensesType_Get",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/idExpenseType"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string",
+                          "example": "https://api.vexpenses.com/v2/expenses-type/{id}"
+                        },
+                        "method": {
+                          "type": "string",
+                          "example": "GET"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "integer",
+                          "example": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Expenses type successfully sent!"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Expense_type"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "expenses type"
+        ],
+        "summary": "Updates an expenses_type object",
+        "operationId": "ExpensesType_Update",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/idExpenseType"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "expenses_type model to be inserted",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Expense_type_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string",
+                          "example": "https://api.vexpenses.com/v2/expenses-type"
+                        },
+                        "method": {
+                          "type": "string",
+                          "example": "PUT"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "integer",
+                          "example": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Expense type successfully updated!"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Expense_type"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "expenses type"
+        ],
+        "summary": "Removes a expenses_type object",
+        "operationId": "ExpensesType_Delete",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/idExpenseType"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string",
+                          "example": "https://api.vexpenses.com/v2/expenses-type/{id}"
+                        },
+                        "method": {
+                          "type": "string",
+                          "example": "DELETE"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "integer",
+                          "example": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Expense type successfully removed!"
+                        },
+                        "data": {
+                          "example": null,
+                          "nullable": true,
+                          "type": "object"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      }
+    },
+    "/v2/currencies": {
+      "get": {
+        "tags": [
+          "currencies"
+        ],
+        "summary": "Returns a array of currencies",
+        "operationId": "Currencies_List",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string",
+                          "example": "https://api.vexpenses.com/v2/currencies"
+                        },
+                        "method": {
+                          "type": "string",
+                          "example": "GET"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "integer",
+                          "example": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Currencies successfully sent!"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Currencie"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
+          }
+        }
+      }
+    },
+    "/v2/advances": {
+      "post": {
+        "tags": [
+          "advances"
+        ],
+        "summary": "Inserts a advance",
+        "operationId": "Advances_Create",
+        "requestBody": {
+          "required": true,
+          "description": "Advance to be inserted",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string",
+                    "example": "Description"
+                  },
+                  "advance_user_id": {
+                    "type": "string",
+                    "example": 9999
+                  },
+                  "advance_date": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "2022-04-19"
+                  },
+                  "value": {
+                    "type": "number",
+                    "example": 99.99
+                  },
+                  "currency_iso": {
+                    "type": "string",
+                    "example": "USD"
+                  },
+                  "creator_user_id": {
+                    "type": "string",
+                    "example": "9999"
+                  }
+                },
+                "required": [
+                  "description",
+                  "advance_user_id",
+                  "advance_date",
+                  "value",
+                  "currency_iso",
+                  "creator_user"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "string",
+                          "example": "https://api.vexpenses.com/v2/advances"
+                        },
+                        "method": {
+                          "type": "string",
+                          "example": "POST"
+                        },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "code": {
+                          "type": "integer",
+                          "example": 200
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Advance successfully created!"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Advance"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error: Unauthorized"
           }
         }
       }
     }
   },
   "components": {
+    "securitySchemes": {
+      "Authorization": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization"
+      }
+    },
     "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
+      "User": {
         "type": "object",
         "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
+          "id": {
+            "type": "integer",
+            "example": 999
           },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
+          "integration_id": {
+            "type": "string",
+            "example": "999"
+          },
+          "external_id": {
+            "type": "string",
+            "example": "78c205da-935d-4772-8b34-4f142bb22931"
+          },
+          "company_id": {
+            "type": "number",
+            "example": 999
+          },
+          "role_id": {
+            "type": "number",
+            "example": 999
+          },
+          "approval_flow_id": {
+            "type": "number",
+            "example": 999
+          },
+          "expense_limit_policy_id": {
+            "type": "number",
+            "example": 999
+          },
+          "user_type": {
+            "type": "string",
+            "example": "ADMINISTRADOR"
+          },
+          "name": {
+            "type": "string",
+            "example": "Name"
+          },
+          "email": {
+            "type": "string",
+            "example": "contato@vexpenses.com.br"
+          },
+          "cpf": {
+            "type": "number",
+            "example": "999.999.999-99"
+          },
+          "phone1": {
+            "type": "string",
+            "example": "(99) 99999-9999"
+          },
+          "phone2": {
+            "type": "string",
+            "example": "(99) 99999-9999"
+          },
+          "birth_date": {
+            "type": "string",
+            "example": "1980-05-16"
+          },
+          "bank": {
+            "type": "string",
+            "example": "Banco do Brasil"
+          },
+          "agency": {
+            "type": "string",
+            "example": "999999"
+          },
+          "account": {
+            "type": "string",
+            "example": "999999"
+          },
+          "confirmed": {
+            "type": "boolean",
+            "example": true
+          },
+          "active": {
+            "type": "boolean",
+            "example": true
+          },
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "field1": {
+                "type": "string",
+                "example": "qwert"
+              },
+              "field2": {
+                "type": "string",
+                "example": "1987-04-22"
+              }
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2019-01-01 01:10:00"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2019-01-01 01:10:00"
+          }
+        },
+        "xml": {
+          "name": "User"
+        }
+      },
+      "User_Post": {
+        "properties": {
+          "integration_id": {
+            "type": "string",
+            "example": "999"
+          },
+          "external_id": {
+            "type": "string",
+            "example": "78c205da-935d-4772-8b34-4f142bb22931"
+          },
+          "approval_flow_id": {
+            "type": "number",
+            "example": 999
+          },
+          "expense_limit_policy_id": {
+            "type": "number",
+            "example": 999
+          },
+          "user_type": {
+            "type": "string",
+            "example": "ADMINISTRADOR"
+          },
+          "name": {
+            "type": "string",
+            "example": "Name"
+          },
+          "email": {
+            "type": "string",
+            "example": "contato@vexpenses.com.br"
+          },
+          "password": {
+            "type": "string",
+            "example": 999
+          },
+          "cpf": {
+            "type": "number",
+            "example": "999.999.999-99"
+          },
+          "phone1": {
+            "type": "string",
+            "example": "(99) 99999-9999"
+          },
+          "phone2": {
+            "type": "string",
+            "example": "(99) 99999-9999"
+          },
+          "birth_date": {
+            "type": "string",
+            "example": "1980-05-16"
+          },
+          "bank": {
+            "type": "string",
+            "example": "Banco do Brasil"
+          },
+          "agency": {
+            "type": "string",
+            "example": "999999"
+          },
+          "account": {
+            "type": "string",
+            "example": "999999"
+          },
+          "active": {
+            "type": "boolean",
+            "example": true
+          },
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "field1": {
+                "type": "string",
+                "example": "qwert"
+              },
+              "field2": {
+                "type": "string",
+                "example": "1987-04-22"
+              }
+            }
+          },
+          "send_welcome_email": {
+            "type": "boolean",
+            "example": true
           }
         }
       },
-      "NewPlant": {
+      "Project_1": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Nome"
+          },
+          "company_name": {
+            "type": "string",
+            "example": "Razão social"
+          },
+          "cnpj": {
+            "type": "string",
+            "example": "47715652000176"
+          },
+          "address": {
+            "type": "string",
+            "example": "Endereço"
+          },
+          "neighborhood": {
+            "type": "string",
+            "example": "Bairro"
+          },
+          "city": {
+            "type": "string",
+            "example": "Cidade"
+          },
+          "state": {
+            "type": "string",
+            "example": "SP"
+          }
+        }
+      },
+      "Project_without_id": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/Plant"
+            "$ref": "#/components/schemas/Project_1"
           },
           {
-            "required": [
-              "id"
-            ],
             "type": "object",
             "properties": {
-              "id": {
-                "description": "Identification number of the plant",
+              "cep": {
                 "type": "integer",
-                "format": "int64"
+                "example": 14400750
+              },
+              "phone1": {
+                "type": "integer",
+                "example": 99999999999
+              },
+              "phone2": {
+                "type": "integer",
+                "example": 99999999999
+              },
+              "integration_id": {
+                "type": "string",
+                "example": 123
               }
             }
           }
         ]
       },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
+      "Project": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 999
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/Project_1"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "zip_code": {
+                "type": "integer",
+                "example": 14400750
+              },
+              "phone1": {
+                "type": "integer",
+                "example": 99999999999
+              },
+              "phone2": {
+                "type": "integer",
+                "example": 99999999999
+              },
+              "true": {
+                "type": "boolean",
+                "example": true
+              }
+            }
+          }
+        ]
+      },
+      "Report": {
         "type": "object",
         "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
+          "id": {
+            "type": "number",
+            "example": 9999
           },
-          "message": {
-            "type": "string"
+          "external_id": {
+            "type": "string",
+            "example": "a3b52842-2a5a-45cf-a544-9cbee4c8f0e7"
+          },
+          "user_id": {
+            "type": "number",
+            "example": 999
+          },
+          "device_id": {
+            "type": "integer",
+            "example": 999
+          },
+          "description": {
+            "type": "string",
+            "example": "description"
+          },
+          "status": {
+            "type": "string",
+            "example": "ABERTO"
+          },
+          "approval_stage_id": {
+            "type": "integer",
+            "example": 999
+          },
+          "approval_user_id": {
+            "type": "integer",
+            "example": 999
+          },
+          "approval_date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2016-02-25 05:04:10"
+          },
+          "paying_company_id": {
+            "type": "integer",
+            "example": 999
+          },
+          "payment_date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2016-02-25 05:04:10"
+          },
+          "payment_method_id": {
+            "type": "integer",
+            "example": 123123
+          },
+          "observation": {
+            "type": "string",
+            "example": "observation"
+          },
+          "true": {
+            "type": "boolean",
+            "example": true
+          },
+          "justification": {
+            "type": "string",
+            "example": "Justification"
+          },
+          "pdf_link": {
+            "type": "string",
+            "example": "https://api.vexpenses.com/v1/relatorios/pdf/aSfdcaSasDaEWsx"
+          },
+          "excel_link": {
+            "type": "string",
+            "example": "https://api.vexpenses.com/v1/relatorios/excel/aSfdcaSasDaEWsx"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2019-01-01 01:10:00"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2019-01-01 01:10:00"
           }
+        }
+      },
+      "Expense_1": {
+        "type": "object",
+        "properties": {
+          "external_id": {
+            "type": "string",
+            "example": "b4a57242-2a5a-45cf-a544-9cbee4c8f0e7"
+          },
+          "expense_type_id": {
+            "type": "integer",
+            "example": 268114
+          },
+          "payment_method_id": {
+            "type": "integer",
+            "example": "231"
+          },
+          "paying_company_id": {
+            "type": "integer",
+            "example": "199"
+          },
+          "route_id": {
+            "type": "integer",
+            "example": 999
+          },
+          "receipt_url": {
+            "type": "string",
+            "example": "https://vexpenses.nyc3.cdn.digitaloceanspaces.com/local/receipts/1a2b3c.jpg"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "example": "2016-12-19"
+          }
+        }
+      },
+      "Expense_2": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "title"
+          },
+          "validate": {
+            "type": "string",
+            "example": ""
+          },
+          "observation": {
+            "type": "string",
+            "example": "observation"
+          }
+        }
+      },
+      "Expense_3": {
+        "type": "object",
+        "properties": {
+          "reimbursable": {
+            "type": "boolean",
+            "example": true
+          },
+          "mileage": {
+            "type": "number",
+            "example": 400
+          },
+          "mileage_value": {
+            "type": "number",
+            "example": "0.00"
+          },
+          "original_currency_iso": {
+            "type": "string",
+            "example": "BRL"
+          },
+          "exchange_rate": {
+            "type": "number",
+            "example": "9,99"
+          },
+          "converted_value": {
+            "type": "number",
+            "example": "99,999"
+          },
+          "converted_currency_iso": {
+            "type": "string",
+            "example": "BRL"
+          }
+        }
+      },
+      "Expense": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 9999
+              },
+              "user_id": {
+                "type": "integer",
+                "example": 1234
+              },
+              "report_id": {
+                "type": "integer",
+                "example": 2558
+              },
+              "device_id": {
+                "type": "integer",
+                "example": 999
+              },
+              "integration_id": {
+                "type": "number",
+                "example": 999
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/Expense_1"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "number",
+                "example": 120.56
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/Expense_2"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "rejected": {
+                "type": "integer",
+                "example": 0
+              },
+              "true": {
+                "type": "boolean",
+                "example": true
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/Expense_3"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "created_at": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2019-01-01 01:10:00"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2019-01-01 01:10:00"
+              }
+            }
+          }
+        ]
+      },
+      "Expense_clear": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "user_id": {
+                "type": "integer",
+                "example": 1234
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/Expense_1"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "number",
+                "example": 120.56
+              },
+              "report_id": {
+                "type": "integer",
+                "example": 2558
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/Expense_2"
+          },
+          {
+            "$ref": "#/components/schemas/Expense_3"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "apportionment": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Apportionment_Clear"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Expense_type": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 999
+          },
+          "integration_id": {
+            "type": "number",
+            "example": 999
+          },
+          "description": {
+            "type": "string",
+            "example": "Hospedagem"
+          },
+          "true": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "Expense_type_post": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "example": "Hospedagem"
+          },
+          "integration_id": {
+            "type": "string",
+            "example": 123
+          }
+        }
+      },
+      "Currencie": {
+        "type": "object",
+        "properties": {
+          "priority": {
+            "type": "number",
+            "example": 100
+          },
+          "iso_code": {
+            "type": "string",
+            "example": "BRL"
+          },
+          "name": {
+            "type": "string",
+            "example": "Real Brasileiro"
+          },
+          "symbol": {
+            "type": "string",
+            "example": "R$"
+          },
+          "subunit": {
+            "type": "string",
+            "example": "Centavo"
+          },
+          "subunit_to_unit": {
+            "type": "number",
+            "example": 100
+          },
+          "symbol_first": {
+            "type": "boolean",
+            "example": true
+          },
+          "html_entity": {
+            "type": "string",
+            "example": "R$"
+          },
+          "decimal_mark": {
+            "type": "string",
+            "example": ","
+          },
+          "thousands_separator": {
+            "type": "string",
+            "example": "."
+          },
+          "iso_numeric": {
+            "type": "number",
+            "example": 986
+          }
+        }
+      },
+      "Parameters": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "example": "workPhone"
+            },
+            "label": {
+              "type": "string",
+              "example": "The work phone number"
+            },
+            "type": {
+              "type": "string",
+              "example": "string"
+            },
+            "created_at": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2019-01-01 01:10:00"
+            },
+            "updated_at": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2019-01-01 01:10:00"
+            }
+          }
+        }
+      },
+      "Costs_center": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 99
+          },
+          "integration_id": {
+            "type": "integer",
+            "example": 999
+          },
+          "name": {
+            "type": "string",
+            "example": "Name"
+          },
+          "company_group_id": {
+            "type": "integer",
+            "example": 999
+          },
+          "true": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "Costs_center_without_id": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Name"
+          },
+          "integration_id": {
+            "type": "string",
+            "example": 123
+          }
+        }
+      },
+      "cost_center_external": {
+        "type": "object",
+        "properties": {
+          "123455": {
+            "type": "boolean",
+            "example": true
+          },
+          "125486": {
+            "type": "boolean",
+            "example": false
+          },
+          "564856": {
+            "type": "boolean",
+            "example": false
+          },
+          "895645": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "Approval-Flow_without_ids": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "example": "Description"
+          },
+          "external_id": {
+            "type": "string",
+            "example": "b4a57242-2a5a-45cf-a544-9cbee4c8f0e7"
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "operator": {
+                  "type": "string",
+                  "example": "E"
+                },
+                "entrance_value": {
+                  "type": "integer",
+                  "example": 0
+                },
+                "order": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "groups": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "operator": {
+                        "type": "string",
+                        "example": "OU"
+                      },
+                      "approvers": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "example": 1231
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Approval-Flow": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 999
+              },
+              "company_id": {
+                "type": "integer",
+                "example": 999
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/Approval-Flow_without_ids"
+          }
+        ]
+      },
+      "Approval-Flow_attach_cost_centers": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "cost_centers_ids": {
+                "type": "array",
+                "example": [
+                  1,
+                  2,
+                  3
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "ApprovalResult": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 123
+          },
+          "idFluxoEtapa": {
+            "type": "integer",
+            "example": 1
+          },
+          "idDespesa": {
+            "type": "integer",
+            "example": 123455
+          },
+          "idUsuarioAprovador": {
+            "type": "integer",
+            "example": 12344
+          },
+          "dataAprovacao": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2019-01-01 01:10:00"
+          },
+          "aprovado": {
+            "type": "boolean",
+            "example": true
+          },
+          "comentarioAprovacao": {
+            "type": "string",
+            "example": "Comment made by the approver"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2019-01-01 01:10:00"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2019-01-01 01:10:00"
+          }
+        }
+      },
+      "Advance": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "10c8f0d5-1145-45ca-a9cf-29e22826bcb4"
+          },
+          "description": {
+            "type": "string",
+            "example": "description"
+          },
+          "advance_user_id": {
+            "type": "integer",
+            "example": 999
+          },
+          "registration_user_id": {
+            "type": "integer",
+            "example": 999
+          },
+          "release_date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-04-19 14:38:46"
+          },
+          "value": {
+            "type": "number",
+            "example": 99.99
+          },
+          "original_currency_iso": {
+            "type": "string",
+            "example": "USD"
+          },
+          "advance_number": {
+            "type": "integer",
+            "example": 99
+          },
+          "advance_report_id": {
+            "type": "integer",
+            "example": 99
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-04-19 14:38:46"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-04-19 14:38:46"
+          }
+        }
+      },
+      "Apportionment_Clear": {
+        "type": "object",
+        "properties": {
+          "reimbursable_company_id": {
+            "type": "integer",
+            "example": 123
+          },
+          "percentage": {
+            "type": "integer",
+            "example": 100
+          }
+        }
+      },
+      "Apportionment": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 9999
+              },
+              "integration_id": {
+                "type": "integer",
+                "example": 999
+              },
+              "expense_id": {
+                "type": "integer",
+                "example": 99999
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/Apportionment_Clear"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "example": "Description"
+              },
+              "true": {
+                "type": "boolean",
+                "example": true
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2019-01-01 01:10:00"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2019-01-01 01:10:00"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "parameters": {
+      "idTeamMember": {
+        "in": "path",
+        "required": true,
+        "name": "id",
+        "description": "ID of the team member",
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "idCostsCenter": {
+        "in": "path",
+        "required": true,
+        "name": "id",
+        "description": "ID of the cost center",
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "idProject": {
+        "in": "path",
+        "required": true,
+        "name": "id",
+        "description": "ID of the project",
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "idApprovalFlow": {
+        "in": "path",
+        "required": true,
+        "name": "id",
+        "description": "ID of the ApprovalFlow",
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "idReport": {
+        "in": "path",
+        "required": true,
+        "name": "id",
+        "description": "ID of the report",
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "idExpense": {
+        "in": "path",
+        "required": true,
+        "name": "id",
+        "description": "ID of the expense",
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "idExpenseType": {
+        "in": "path",
+        "required": true,
+        "name": "id",
+        "description": "ID of the expenses_type",
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "emailTeamMember": {
+        "in": "path",
+        "required": true,
+        "name": "email",
+        "description": "Email of the team member",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "paginateParameter": {
+        "in": "query",
+        "required": false,
+        "name": "paginate",
+        "description": "Option to paginate or not the response",
+        "schema": {
+          "type": "boolean",
+          "example": true
+        }
+      },
+      "perPageParameter": {
+        "in": "query",
+        "required": false,
+        "name": "per_page",
+        "description": "Quantity per page in paginated response",
+        "schema": {
+          "type": "integer",
+          "example": 999
+        }
+      },
+      "pageParameter": {
+        "in": "query",
+        "required": false,
+        "name": "page",
+        "description": "Page number to retrieve in paginated response",
+        "schema": {
+          "type": "integer",
+          "example": 999
         }
       }
     },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
-      }
+    "responses": {}
+  },
+  "security": [
+    {
+      "Authorization": []
     }
-  }
+  ]
 }

@@ -75,7 +75,8 @@
     },
     "logo": {
         "light": "/logo/logovexvr_horizontalcoloridotag.svg",
-        "dark": "/logo/logovexvr_horizontalcoloridotag.svg"
+        "dark": "/logo/logovexvr_horizontalcoloridotag.svg", 
+        "height": 100
     },
     "navbar": {
         "links": [

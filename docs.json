@@ -17,7 +17,7 @@
                         "group": "Início",
                         "pages": [
                             "index",
-                            "quickstart",
+                            "autenticacao",
                             "development"
                         ]
                     },

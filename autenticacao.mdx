@@ -1,0 +1,31 @@
+---
+title: "Autenticação"
+description: "Como enviar requisições para a nossa API"
+---
+
+<Tip>
+  **Token API:** O token da empresa precisa ser obtido através da conta de um administrador da empresa.
+</Tip>
+
+## Como obter o token pela conta de administrador?
+
+Com o acesso de administrador, vá até a aba "**Configurações**" e selecione a opção "**Integrações**", onde é possível encontrar um **token público contendo letras e números**.
+
+Copie o token para adicioná-lo no campo "**Authentication**".
+
+### Onde devo informar o campo Authentication na chamada para API?
+
+Ela deve ser transmitida em todas as requisições no header com campo **Authentication :**
+
+![Captura de tela 2025-09-08 155709.png](/images/Capturadetela2025-09-08155709.png)
+
+Caso o Token seja inválida ou não seja informado, a API VExpenses retornará `HTTP 401`.
+
+Na collection seu Token pode ser informado na área de ambientes.
+
+<Warning>
+  **_Atenção_**:\
+  Seu token carrega muitos privilégios, portanto certifique-se de mantê-lo protegido. Não informe ele em atendimentos e nem a exponha no front-end da sua aplicação.
+</Warning>
+
+\\
